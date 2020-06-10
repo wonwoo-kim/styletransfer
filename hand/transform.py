@@ -45,10 +45,10 @@ class Transform:
         new_rows, new_cols = int(rows * strides), int(cols * strides)
 
         new_shape = [batch_size, new_rows, new_cols, num_filters]
-        tf_shape = tf.stack(new_shape)
+        tf_shape = tf.concat([new_shape], 0)    # origin : tf_shape = tf.stack(new_shape)
         strides_shape = [1,strides,strides,1]
 
-        net = tf.nn.conv2d_transpose(net, weights_init, tf_shape, strides_shape, padding='SAME')
+        net = tf.nn.conv2d_transpose(net, weights_init, tf_shape, strides_shape, padding='SAME',name='51conv')
         net = self._instance_norm(net, name=name)
         return tf.nn.relu(net)
 
@@ -60,7 +60,7 @@ class Transform:
     def _instance_norm(self, net, name=None):
         batch, rows, cols, channels = [i.value for i in net.get_shape()]
         var_shape = [channels]
-        mu, sigma_sq = tf.nn.moments(net, [1,2], keep_dims=True)
+        mu, sigma_sq = tf.nn.moments(net, [1,2], keep_dims=True,name='63moments')
         with tf.variable_scope(name, reuse=self.reuse):
             shift = tf.get_variable('shift', initializer=tf.zeros(var_shape), dtype=tf.float32)
             scale = tf.get_variable('scale', initializer=tf.ones(var_shape), dtype=tf.float32)
