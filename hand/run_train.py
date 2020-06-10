@@ -18,9 +18,9 @@ def parse_args():
     parser.add_argument('--style', type=str, default='style/wave.jpg', help='File path of style image (notation in the paper : a)', required=True)
     parser.add_argument('--output', type=str, default='models', help='File path for trained-model. Train-log is also saved here.', required=True)
 	
-    parser.add_argument('--content_weight', type=float, default=7.5e0, help='Weight of content-loss')
-    parser.add_argument('--style_weight', type=float, default=5e2, help='Weight of style-loss')
-    parser.add_argument('--tv_weight', type=float, default=2e2, help='Weight of total-variance-loss')
+    #parser.add_argument('--content_weight', type=float, default=7.5e0, help='Weight of content-loss')
+    #parser.add_argument('--style_weight', type=float, default=5e2, help='Weight of style-loss')
+    #parser.add_argument('--tv_weight', type=float, default=2e2, help='Weight of total-variance-loss')
 
     parser.add_argument('--content_layers', nargs='+', type=str, default=['relu4_2'], help='VGG19 layers used for content loss')
     parser.add_argument('--style_layers', nargs='+', type=str, default=['relu1_1', 'relu2_1', 'relu3_1', 'relu4_1', 'relu5_1'],
@@ -30,9 +30,9 @@ def parse_args():
     parser.add_argument('--style_layer_weights', nargs='+', type=float, default=[.2,.2,.2,.2,.2],
                         help='Style loss for each content is multiplied by corresponding weight')
 
-    parser.add_argument('--learn_rate', type=float, default=1e-3, help='Learning rate for Adam optimizer')
-    parser.add_argument('--num_epochs', type=int, default=2, help='The number of epochs to run')
-    parser.add_argument('--batch_size', type=int, default=4, help='Batch size')
+    #parser.add_argument('--learn_rate', type=float, default=1e-3, help='Learning rate for Adam optimizer')
+    #parser.add_argument('--num_epochs', type=int, default=2, help='The number of epochs to run')
+    #parser.add_argument('--batch_size', type=int, default=4, help='Batch size')
 
     parser.add_argument('--checkpoint_every', type=int, default=1000, help='save a trained model every after this number of iterations')
 
@@ -42,7 +42,7 @@ def parse_args():
     parser.add_argument('--max_size', type=int, default=None, help='The maximum width or height of input images')
 
     return check_args(parser.parse_args())
-
+'''
 """checking arguments"""
 def check_args(args):
 
@@ -161,6 +161,7 @@ def check_args(args):
 
 ####################################
 
+'''
 
 """add one dim for batch"""
 # VGG19 requires input dimension to be (batch, height, width, channel)
@@ -188,7 +189,7 @@ def main():
 
     # create a map for content layers info
     CONTENT_LAYERS = {}
-    for layer, weight in zip(args.content_layers,args.content_layer_weights):
+    for layer, weight in zip(args.content_layers4,args.content_layer_weights):
         CONTENT_LAYERS[layer] = weight
 
     # create a map for style layers info
@@ -206,12 +207,12 @@ def main():
                                                           content_images=content_images,
                                                           style_image=add_one_dim(style_image),
                                                           net=vgg_net,
-                                                          num_epochs=args.num_epochs,
-                                                          batch_size=args.batch_size,
-                                                          content_weight=args.content_weight,
-                                                          style_weight=args.style_weight,
-                                                          tv_weight=args.tv_weight,
-                                                          learn_rate=args.learn_rate,
+                                                          num_epochs=2,
+                                                          batch_size=4,
+                                                          content_weight=7.5e0,
+                                                          style_weight=5e2,
+                                                          tv_weight=2e2,
+                                                          learn_rate=1e-3,
                                                           save_path=args.output,
                                                           check_period=args.checkpoint_every,
                                                           test_image=args.test,
