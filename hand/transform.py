@@ -64,8 +64,8 @@ class Transform:
         #mu, sigma_sq = tf.nn.moments(net, [1,2], keep_dims=True, name='63moments')
 
         mu = tf.reduce_mean(net, [1, 2], keepdims=True , name='63mean')
-        ans = tf.subtract(net, mu)
-        ans2 = tf.multiply(ans, ans)
+        ans = net-mu
+        ans2 = ans*ans
         sigma_sq = tf.reduce_mean(ans2,[1,2],keepdims=True, name='63variance')
 
         with tf.variable_scope(name, reuse=self.reuse):
