@@ -27,7 +27,7 @@ class Transform:
         return preds
 
     def _reflection_padding(self, net):
-        return tf.pad(net,[[0, 0],[40, 40],[40, 40], [0, 0]], "REFLECT")
+        return tf.pad(net,[[0, 0],[40, 40],[40, 40], [0, 0]], "CONSTANT")
 
     def _conv_layer(self, net, num_filters, filter_size, strides, padding='SAME', relu=True, name=None):
         weights_init = self._conv_init_vars(net, num_filters, filter_size, name=name)
@@ -67,6 +67,7 @@ class Transform:
         ans = net-mu
         ans2 = ans*ans
         sigma_sq = tf.reduce_mean(ans2,[1,2],keepdims=True, name='63variance')
+
 
         with tf.variable_scope(name, reuse=self.reuse):
             shift = tf.get_variable('shift', initializer=tf.zeros(var_shape), dtype=tf.float32)
