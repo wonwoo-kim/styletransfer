@@ -1,6 +1,7 @@
 # Most code in this file was borrowed from https://github.com/lengstrom/fast-style-transfer/blob/master/src/transform.py
 
 import tensorflow as tf
+import numpy as np
 
 class Transform:
     def __init__(self, mode='train'):
@@ -60,7 +61,13 @@ class Transform:
     def _instance_norm(self, net, name=None):
         batch, rows, cols, channels = [i.value for i in net.get_shape()]
         var_shape = [channels]
-        mu, sigma_sq = tf.nn.moments(net, [1,2], keep_dims=True,name='63moments')
+        #mu, sigma_sq = tf.nn.moments(net, [1,2], keep_dims=True, name='63moments')
+
+        mu = tf.reduce_mean(net, [1, 2], keepdims=True , name='63mean')
+        ans = tf.subtract(net, mu)
+        ans2 = tf.multiply(ans, ans)
+        sigma_sq = tf.reduce_mean(ans2,[1,2],keepdims=True, name='63variance')
+
         with tf.variable_scope(name, reuse=self.reuse):
             shift = tf.get_variable('shift', initializer=tf.zeros(var_shape), dtype=tf.float32)
             scale = tf.get_variable('scale', initializer=tf.ones(var_shape), dtype=tf.float32)
